@@ -1,12 +1,45 @@
-#magic {
-  position: absolute;
-  top: 80%;
-  left: 80%;
-  transform: translate(-80%, -80%);
+/* Full-Screen Overlay Styles */
+#device-overlay {
+  position: fixed; /* Fixed position to cover the entire viewport */
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100vh;
-  max-width: 100%; /* Ensures the container scales to fit the viewport */
-  max-height: 100vh;
-  background-color: #000000; /* Background color */
-  z-index: -9999;
+  height: 100%;
+  background-color: #000000; /* Match the #magic background color */
+  display: flex; /* Use Flexbox for centering */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 10000; /* Ensure it sits above all other elements */
+  padding: 20px;
+  box-sizing: border-box;
+  transition: opacity 0.3s ease; /* Smooth transition for appearance */
+  opacity: 0; /* Initially hidden */
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+
+/* Visible state for the overlay */
+#device-overlay.visible {
+  opacity: 1;
+  pointer-events: all; /* Enable interaction when visible */
+}
+
+/* Message Styling */
+#device-overlay p {
+  font-size: 1.5em;
+  max-width: 600px;
+  line-height: 1.4;
+  color: #783BFA; /* Text color set to #783BFA */
+}
+
+/* Responsive Message Styling */
+@media (max-width: 600px) {
+  #device-overlay p {
+    font-size: 1.2em;
+  }
+}
+
+/* Prevent background scrolling when overlay is visible */
+body.no-scroll {
+  overflow: hidden;
 }

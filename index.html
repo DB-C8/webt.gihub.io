@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=500.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Web610 🌟</title>
   <style>
+    /* Styles for the main particles container */
     #magic {
       position: absolute;
       top: 50%;
@@ -16,13 +17,50 @@
       z-index: -9999;
     }
 
-    /* Style for the mobile block message */
-    #mobile-block-message {
-      display: none;
+    /* Full-Screen Overlay Styles */
+    #device-overlay {
+      position: fixed; /* Fixed position to cover the entire viewport */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000000; /* Match the #magic background color */
+      color: #ffffff; /* Match the desired text color */
+      display: flex; /* Use Flexbox for centering */
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      color: white;
-      font-size: 24px;
-      padding: 50px;
+      z-index: 10000; /* Ensure it sits above all other elements */
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity 0.3s ease; /* Smooth transition for appearance */
+      opacity: 0; /* Initially hidden */
+      pointer-events: none; /* Prevent interaction when hidden */
+    }
+
+    /* Visible state for the overlay */
+    #device-overlay.visible {
+      opacity: 1;
+      pointer-events: all; /* Enable interaction when visible */
+    }
+
+    /* Message Styling */
+    #device-overlay p {
+      font-size: 1.5em;
+      max-width: 600px;
+      line-height: 1.4;
+    }
+
+    /* Responsive Message Styling */
+    @media (max-width: 600px) {
+      #device-overlay p {
+        font-size: 1.2em;
+      }
+    }
+
+    /* Prevent background scrolling when overlay is visible */
+    body.no-scroll {
+      overflow: hidden;
     }
   </style>
 </head>
@@ -30,9 +68,11 @@
 
   <div id="magic"></div>
 
-  <!-- Message to display on mobile devices -->
-  <div id="mobile-block-message">
-    This site is not available on mobile devices. Please access it from a desktop browser.
+  <!-- Full-Screen Device Overlay -->
+  <div id="device-overlay" aria-live="assertive" role="alert">
+    <p>
+      This site is not available on mobile devices. Please access it from a desktop browser for the best experience.
+    </p>
   </div>
 
   <!-- Vertex Shader -->
@@ -68,11 +108,27 @@
       return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
     }
 
+    // Function to show the device overlay
+    function showOverlay() {
+      var overlay = document.getElementById('device-overlay');
+      if (overlay) {
+        overlay.classList.add('visible');
+        document.body.classList.add('no-scroll'); // Prevent background scrolling
+      }
+    }
+
+    // Function to hide the device overlay (optional)
+    function hideOverlay() {
+      var overlay = document.getElementById('device-overlay');
+      if (overlay) {
+        overlay.classList.remove('visible');
+        document.body.classList.remove('no-scroll');
+      }
+    }
+
     // Block mobile devices
     if (isMobileDevice()) {
-      // Hide the magic container and show the mobile block message
-      document.getElementById('magic').style.display = 'none';
-      document.getElementById('mobile-block-message').style.display = 'block';
+      showOverlay(); // Show the overlay message
     } else {
       const preload = () => {
         const manager = new THREE.LoadingManager();
@@ -254,8 +310,8 @@
           const geometry = new THREE.ShapeGeometry(shapes);
           geometry.computeBoundingBox();
 
-          const xMid = - 0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-          const yMid = - 0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+          const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+          const yMid = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
 
           geometry.center();
 

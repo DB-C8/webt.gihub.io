@@ -1,0 +1,12 @@
+#magic {
+  position: absolute;
+  top: 80%;
+  left: 80%;
+  transform: translate(-80%, -80%);
+  width: 100%;
+  height: 100vh;
+  max-width: 100%; /* Ensures the container scales to fit the viewport */
+  max-height: 100vh;
+  background-color: #000000; /* Background color */
+  z-index: -9999;
+}

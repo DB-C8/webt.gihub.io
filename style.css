@@ -29,7 +29,7 @@
   font-size: 1.5em;
   max-width: 600px;
   line-height: 1.4;
-  color: #783BFA; /* Text color set to #783BFA */
+  color: #783BFA !important; /* Force the text color to #783BFA */
 }
 
 /* Responsive Message Styling */

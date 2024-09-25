@@ -1,20 +1,40 @@
+<!-- Updated HTML and CSS with JavaScript logic for improved text handling -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web610 🌟</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scaleable=no">
+  <title>Web610 😎</title>
   <style>
+    /* Reset some default styles for consistency */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Ensure html and body take full height and width */
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden; /* Prevent unintended scrollbars */
+      font-family: Arial, sans-serif;
+      -webkit-user-select: none; /* Disable text selection for Safari */
+      -moz-user-select: none; /* Disable text selection for Firefox */
+      -ms-user-select: none; /* Disable text selection for IE10+ */
+      user-select: none; /* Disable text selection for modern browsers */
+    }
+
     /* Styles for the main particles container */
     #magic {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      position: fixed; /* Fixed position to cover the entire viewport */
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 100vh;
-      background-color: #000000; /* Background color */
+      height: 100%;
+      background-color: #0A001F; /* Background color */
       z-index: -9999;
+      overflow: hidden; /* Prevent content overflow */
     }
 
     /* Full-Screen Overlay Styles */
@@ -24,13 +44,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #000000; /* Match the #magic background color */
-      color: #ffffff; /* Match the desired text color */
+      background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black */
+      color: #ffffff; /* Desired text color */
       display: flex; /* Use Flexbox for centering */
       justify-content: center;
       align-items: center;
       text-align: center;
-      z-index: 10000; /* Ensure it sits above all other elements */
+      z-index: 10000; /* Sit above all other elements */
       padding: 20px;
       box-sizing: border-box;
       transition: opacity 0.3s ease; /* Smooth transition for appearance */
@@ -49,6 +69,7 @@
       font-size: 1.5em;
       max-width: 600px;
       line-height: 1.4;
+      word-break: break-word; /* Prevent long words from overflowing */
     }
 
     /* Responsive Message Styling */
@@ -62,11 +83,235 @@
     body.no-scroll {
       overflow: hidden;
     }
+
+    /* Floating Action Button (FAB) styles */
+    #fab {
+      position: fixed;
+      bottom: 2%;
+      right: 2%;
+      width: 60px;
+      height: 60px;
+      background-color: #783BFA;
+      border-radius: 50%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 30px; /* Increase font size for icon */
+      color: #ffffff; /* White text */
+      text-align: center;
+      z-index: 10001; /* Above the overlay */
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    #fab.hidden {
+      display: none; /* Hide FAB */
+    }
+
+    #fab:hover {
+      background-color: #5a29c7;
+      transform: scale(1.05);
+    }
+
+    /* Expanded Form Styles */
+    #name-form {
+      position: fixed;
+      background: rgba(255, 255, 255, 0.1); /* Semi-transparent black background */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      display: none; /* Hidden by default */
+      flex-direction: column;
+      align-items: center;
+      z-index: 10001; /* Above the overlay */
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #name-form.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #name-form.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    #name-form label {
+      font-size: 1em;
+      margin-bottom: 10px;
+      color: #ffffff; /* White text for better contrast */
+      text-align: center;
+    }
+
+    #name-form input {
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 15px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      font-size: 1em;
+      background-color: #333333; /* Dark background for input */
+      color: #ffffff; /* White text in input */
+      overflow: hidden; /* Prevent overflow */
+      white-space: nowrap; /* Prevent text wrapping */
+      text-overflow: ellipsis; /* Display ellipsis for overflowed text */
+    }
+
+    #name-form button {
+      width: 100%; /* Full width button */
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #CCFB53; /* Green color */
+      color: #000000;
+      transition: background-color 0.3s ease;
+    }
+
+    #name-form button:hover {
+      background-color: #bff72e; /* Hover color */
+    }
+
+    /* Error Message Styling */
+    #error-message {
+      color: #ff4d4d;
+      font-size: 0.9em;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Footer Styling */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 20px;
+      background: linear-gradient(90deg, #8989ee, #783BFA);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      font-size: 1.1em;
+      font-weight: 500;
+      transition: opacity 0.3s ease; /* Smooth fade transition */
+      overflow: hidden; /* Prevent overflow */
+      white-space: nowrap; /* Prevent text wrapping */
+      text-overflow: ellipsis; /* Display ellipsis for overflowed text */
+    }
+
+    footer.hidden {
+      opacity: 0; /* Hide footer */
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    footer a svg {
+      margin-right: 8px;
+      fill: #ffffff;
+    }
+
+    /* Responsive Design Adjustments */
+    @media (max-width: 600px) {
+      #name-form {
+        width: 80%;
+        right: 10%;
+        bottom: 20%;
+      }
+
+      #fab {
+        width: 50px;
+        height: 50px;
+      }
+
+      #fab {
+        font-size: 25px; /* Adjust font size for smaller screens */
+      }
+
+      #name-form label {
+        font-size: 1.1em;
+      }
+
+      #name-form input {
+        font-size: 1em;
+      }
+
+      #name-form button {
+        font-size: 0.9em;
+        padding: 8px;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      footer a {
+        margin: 10px 0;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      /* Adjustments for large screens */
+      #name-form {
+        width: 400px;
+      }
+
+      #fab {
+        width: 70px;
+        height: 70px;
+      }
+
+      #fab {
+        font-size: 35px; /* Increase font size for larger screens */
+      }
+
+      #name-form label {
+        font-size: 1.2em;
+      }
+
+      #name-form input {
+        font-size: 1.1em;
+      }
+
+      #name-form button {
+        font-size: 1em;
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div id="magic"></div>
+
+  <!-- Floating Action Button (FAB) -->
+  <div id="fab" aria-label="Open Name Form">
+    ✎
+  </div>
+
+  <!-- Expanded Name Form -->
+  <div id="name-form">
+    <label for="user-name">Enter your first and last name:</label>
+    <input type="text" id="user-name" placeholder="First and Last Name">
+    <button id="generate-btn">Generate</button>
+    <div id="error-message"></div>
+  </div>
 
   <!-- Full-Screen Device Overlay -->
   <div id="device-overlay" aria-live="assertive" role="alert">
@@ -74,6 +319,25 @@
       This site is not available on mobile devices. Please access it from a desktop browser for the best experience.
     </p>
   </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <a href="https://www.google.com/maps/place/Web610+%F0%9F%8C%9F/@40.6115684,-75.3813732,17z/data=!3m2!4b1!5s0x89c43e5c8f450e81:0x1d50a82404d98642!4m6!3m5!1s0x89c43f299ba02093:0x66de4aaf2844af7b!8m2!3d40.6115684!4d-75.3787983!16s%2Fg%2F11w1dxbhlz?entry=ttu&g_ep=EgoyMDI0MDkxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+      <!-- Map Icon SVG -->
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 2.25 1.92 5.9 5.34 10.05.35.43.97.43 1.32 0C17.08 14.9 19 11.25 19 9c0-3.86-3.14-7-7-7zm0 15c-1.66 0-5-4.33-5-8 0-2.76 2.24-5 5-5s5 2.24 5 5c0 3.67-3.34 8-5 8zm0-10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+      306 South New Street, Suite 220, Bethlehem, PA 18015
+    </a>
+    <a href="mailto:hello@web610.com" target="_blank">
+      <!-- Email Icon SVG -->
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg>
+      hello@web610.com
+    </a>
+    <a href="tel:610-585-3666" target="_blank">
+      <!-- Phone Icon SVG -->
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M6.62 10.79a15.534 15.534 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.08-.22c1.17.46 2.45.71 3.76.71.55 0 1 .45 1 1v3.5c0 .55-.45 1-1 1C12.39 21 3 11.61 3 3c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.31.25 2.59.71 3.76.14.34.06.73-.22 1.01l-2.2 2.2z"></path></svg>
+      610-585-3666
+    </a>
+  </footer>
 
   <!-- Vertex Shader -->
   <script type="x-shader/x-vertex" id="vertexshader">
@@ -101,7 +365,9 @@
     }
   </script>
 
+  <!-- Include Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
+
   <script>
     // Function to detect mobile devices
     function isMobileDevice() {
@@ -117,15 +383,6 @@
       }
     }
 
-    // Function to hide the device overlay (optional)
-    function hideOverlay() {
-      var overlay = document.getElementById('device-overlay');
-      if (overlay) {
-        overlay.classList.remove('visible');
-        document.body.classList.remove('no-scroll');
-      }
-    }
-
     // Block mobile devices
     if (isMobileDevice()) {
       showOverlay(); // Show the overlay message
@@ -135,19 +392,29 @@
         let typo = null;
 
         manager.onLoad = () => {
-          const environment = new Environment(typo, particle);
+          environment = new Environment(typo, particle);
         };
 
         const loader = new THREE.FontLoader(manager);
+        // Use a reliable and accessible font source
         loader.load(
-          'https://res.cloudinary.com/dydre7amr/raw/upload/v1612950355/font_zsd4dr.json',
+          'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
           (font) => {
             typo = font;
+          },
+          undefined,
+          (err) => {
+            console.error('An error happened loading the font.');
           }
         );
 
         const particle = new THREE.TextureLoader(manager).load(
-          'https://res.cloudinary.com/dfvtkoboz/image/upload/v1605013866/particle_a64uzf.png'
+          'https://threejs.org/examples/textures/sprites/disc.png',
+          undefined,
+          undefined,
+          (err) => {
+            console.error('An error happened loading the particle texture.');
+          }
         );
       };
 
@@ -156,6 +423,8 @@
       } else {
         document.addEventListener('DOMContentLoaded', preload);
       }
+
+      let environment;
 
       class Environment {
         constructor(font, particle) {
@@ -167,10 +436,15 @@
           this.createRenderer();
           this.setup();
           this.bindEvents();
+
+          // Trigger resize to ensure correct initial sizing
+          window.dispatchEvent(new Event('resize'));
         }
 
         bindEvents() {
           window.addEventListener('resize', this.onWindowResize.bind(this));
+          window.addEventListener('orientationchange', this.onWindowResize.bind(this)); // Adjust for orientation changes
+          window.addEventListener('fullscreenchange', this.onWindowResize.bind(this)); // Adjust for fullscreen changes
         }
 
         setup() {
@@ -181,11 +455,15 @@
             this.camera,
             this.renderer
           );
+          // Ensure text size is adjusted on initial load
+          this.createParticles.adjustTextSize();
         }
 
         render() {
-          this.createParticles.render();
-          this.renderer.render(this.scene, this.camera);
+          if (!this.animationPaused) {
+            this.createParticles.render();
+            this.renderer.render(this.scene, this.camera);
+          }
         }
 
         createCamera() {
@@ -195,15 +473,15 @@
             1,
             10000
           );
-          this.camera.position.set(0, 0, 100);
+          this.camera.position.set(0, 0, 68);
         }
 
         createRenderer() {
-          this.renderer = new THREE.WebGLRenderer();
+          this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
           this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
           this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
           this.renderer.outputEncoding = THREE.sRGBEncoding;
-          this.renderer.setClearColor(0x0A001F, 1); // Set clear color to match background
+          this.renderer.setClearColor(0x0A001F, 1); // Set clear color to match original background
           this.container.appendChild(this.renderer.domElement);
           this.renderer.setAnimationLoop(() => {
             this.render();
@@ -211,9 +489,13 @@
         }
 
         onWindowResize() {
-          this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+          // Use container's dimensions for consistency
+          const width = this.container.clientWidth;
+          const height = this.container.clientHeight;
+
+          this.camera.aspect = width / height;
           this.camera.updateProjectionMatrix();
-          this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+          this.renderer.setSize(width, height);
           this.createParticles.adjustTextSize();
         }
       }
@@ -227,19 +509,28 @@
           this.renderer = renderer;
 
           this.raycaster = new THREE.Raycaster();
-          this.mouse = new THREE.Vector2(-200, 200);
+          this.mouse = new THREE.Vector2(-200, 200); // Initialized off-screen
           this.colorChange = new THREE.Color();
           this.buttom = false;
 
           this.data = {
-            text: 'WEB610',
+            text: 'WEB610', // Default text
             amount: 1500,
             particleSize: 1,
             particleColor: 0xffffff,
             textSize: this.getAutoTextSize(),
-            area: 500,
+            area: 750,
             ease: 0.05,
+            minTextSize: 15, // Increased minimum text size by 20% (12 * 1.2 = 14.4)
+            maxTextWidth: 0.95, // Maximum text width as a percentage of screen width
+            maxTextHeight: 0.95, // Maximum text height as a percentage of screen height
+            padding: 0.1, // Padding as 10% of screen dimensions
           };
+
+          this.particles = null; // Initialize particles as null
+          this.geometryCopy = null; // Initialize geometryCopy as null
+
+          this.maxLineWidth = 0; // Track maximum line width
 
           this.setup();
           this.bindEvents();
@@ -256,6 +547,7 @@
           });
           this.planeArea = new THREE.Mesh(geometry, material);
           this.planeArea.visible = false;
+          this.scene.add(this.planeArea); // Ensure the planeArea is part of the scene
           this.createText();
         }
 
@@ -269,33 +561,51 @@
         getAutoTextSize() {
           const width = window.innerWidth;
           const height = window.innerHeight;
-          const relativeTextSize = Math.min(width, height) * 0.05;
+          // Start with a smaller initial text size (5% of the smaller dimension)
+          const relativeTextSize = Math.min(width, height) * 0.1;
           return relativeTextSize;
         }
 
-        adjustTextSize() {
-          let textSize = this.getAutoTextSize();
-          this.data.textSize = textSize;
+ adjustTextSize() {
+  let textSize = this.getAutoTextSize();
 
-          let fits = false;
-          while (!fits) {
-            this.scene.remove(this.particles);
-            this.createText();
+  const containerWidth = this.renderer.domElement.clientWidth;
+  const containerHeight = this.renderer.domElement.clientHeight;
 
-            const boundingBox = this.getTextBoundingBox();
-            const containerWidth = this.renderer.domElement.clientWidth;
-            const containerHeight = this.renderer.domElement.clientHeight;
+  const maxTextWidth = containerWidth * (1 - this.data.padding * 2); // Account for 10% padding on both sides
+  const maxTextHeight = containerHeight * (1 - this.data.padding * 2); // Account for 10% padding on top and bottom
 
-            if (boundingBox.width > containerWidth || boundingBox.height > containerHeight) {
-              textSize *= 0.9;
-              this.data.textSize = textSize;
-            } else {
-              fits = true;
-            }
-          }
-        }
+  let fits = false;
+  let iteration = 0;
+  const maxIterations = 40; // Prevent infinite loops
+
+  while (!fits && iteration < maxIterations) {
+    this.disposeParticles();
+
+    // Clamp the text size between the minimum and maximum
+    this.data.textSize = Math.max(this.data.minTextSize, textSize);
+    this.createText();
+
+    const textBox = this.getTextBoundingBox();
+    if (
+      textBox.width <= maxTextWidth &&
+      textBox.height <= maxTextHeight
+    ) {
+      fits = true;
+    } else {
+      // Reduce text size by 5% for finer adjustments
+      textSize *= 0.9; // Reduced to 90% instead of 95% for more aggressive scaling
+      iteration++;
+    }
+  }
+
+  if (iteration === maxIterations) {
+    console.warn('Maximum iterations reached while adjusting text size.');
+  }
+}
 
         getTextBoundingBox() {
+          if (!this.particles) return new THREE.Vector3(0, 0, 0);
           const box = new THREE.Box3().setFromObject(this.particles);
           const size = new THREE.Vector3();
           box.getSize(size);
@@ -303,54 +613,76 @@
         }
 
         createText() {
+          if (!this.font) {
+            console.error('Font not loaded.');
+            return;
+          }
+
+          const lines = this.data.text.split('\n');
+          const lineSpacing = this.data.textSize * 1.5;
+
+          const totalHeight = (lines.length - 1) * lineSpacing;
+          const yMid = totalHeight / 2;
+
+          this.maxLineWidth = 0;
+
           const thePoints = [];
-          this.data.textSize = this.getAutoTextSize();
-
-          const shapes = this.font.generateShapes(this.data.text, this.data.textSize);
-          const geometry = new THREE.ShapeGeometry(shapes);
-          geometry.computeBoundingBox();
-
-          const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-          const yMid = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
-
-          geometry.center();
-
-          const holeShapes = [];
-          shapes.forEach((shape) => {
-            if (shape.holes && shape.holes.length > 0) {
-              shape.holes.forEach((hole) => {
-                holeShapes.push(hole);
-              });
-            }
-          });
-
-          shapes.push(...holeShapes);
-
           const colors = [];
           const sizes = [];
-          const staticColor = new THREE.Color(0x783BFA); // Static particles color
-          const movingColor = new THREE.Color(0xCCFB53); // Moving particles color
-          shapes.forEach((shape) => {
-            const amountPoints = shape.type === 'Path' ? this.data.amount / 2 : this.data.amount;
-            const points = shape.getSpacedPoints(amountPoints);
 
-            points.forEach((element) => {
-              const a = new THREE.Vector3(element.x, element.y, 0);
-              thePoints.push(a);
-              colors.push(staticColor.r, staticColor.g, staticColor.b); // Static color by default
-              sizes.push(1);
+          lines.forEach((line, index) => {
+            const shapes = this.font.generateShapes(line, this.data.textSize);
+            const geometry = new THREE.ShapeGeometry(shapes);
+            geometry.computeBoundingBox();
+
+            const lineWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+            if (lineWidth > this.maxLineWidth) {
+              this.maxLineWidth = lineWidth;
+            }
+
+            const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+            const yMidLine = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+
+            geometry.center();
+
+            const holeShapes = [];
+            shapes.forEach((shape) => {
+              if (shape.holes && shape.holes.length > 0) {
+                shape.holes.forEach((hole) => {
+                  holeShapes.push(hole);
+                });
+              }
+            });
+
+            shapes.push(...holeShapes);
+
+            const staticColor = new THREE.Color(0x783BFA); // Static particles color
+
+            shapes.forEach((shape) => {
+              const amountPoints = shape.type === 'Path' ? Math.floor(this.data.amount / 2) : this.data.amount;
+              const points = shape.getSpacedPoints(amountPoints);
+
+              points.forEach((element) => {
+                const a = new THREE.Vector3(
+                  element.x + xMid,
+                  element.y + yMidLine - index * lineSpacing + yMid,
+                  0
+                );
+                thePoints.push(a);
+                colors.push(staticColor.r, staticColor.g, staticColor.b);
+                sizes.push(this.data.particleSize * (this.data.textSize / 15));
+              });
             });
           });
 
           const geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
-          geoParticles.translate(xMid, yMid, 0);
 
           geoParticles.setAttribute('customColor', new THREE.Float32BufferAttribute(colors, 3));
           geoParticles.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
 
           const material = new THREE.ShaderMaterial({
             uniforms: {
-              color: { value: new THREE.Color(0xffffff) }, // Base color multiplier (white)
+              color: { value: new THREE.Color(0xffffff) },
               pointTexture: { value: this.particleImg },
             },
             vertexShader: document.getElementById('vertexshader').textContent,
@@ -367,6 +699,49 @@
           this.geometryCopy.copy(this.particles.geometry);
         }
 
+        disposeParticles() {
+          if (this.particles) {
+            this.scene.remove(this.particles);
+            this.particles.geometry.dispose();
+            this.particles.material.dispose();
+            this.particles = null;
+          }
+          if (this.geometryCopy) {
+            this.geometryCopy.dispose();
+            this.geometryCopy = null;
+          }
+        }
+
+        updateText(newText) {
+          const errorMessage = document.getElementById('error-message');
+          const trimmedText = newText.trim();
+          const words = trimmedText.split(/\s+/);
+          const maxWords = 2;
+          const maxCharsPerWord = 13;
+
+          if (words.length > maxWords) {
+            errorMessage.textContent = `Please enter only first and last names (maximum ${maxWords} words).`;
+            return;
+          }
+
+          for (let word of words) {
+            if (word.length > maxCharsPerWord) {
+              errorMessage.textContent = `Each name should be at most ${maxCharsPerWord} characters long.`;
+              return;
+            }
+          }
+
+          errorMessage.textContent = '';
+
+          this.disposeParticles();
+
+          this.data.text = words.length === 0 ? "WEB610" : words.length === 2 ? `${words[0]}\n${words[1]}` : words[0];
+
+          this.createText();
+
+          this.adjustTextSize();
+        }
+
         onWindowResize() {
           this.camera.aspect = window.innerWidth / window.innerHeight;
           this.camera.updateProjectionMatrix();
@@ -375,6 +750,13 @@
         }
 
         onMouseDown(event) {
+          if (event.target.closest('#name-form, #fab')) return; // Prevent animation interaction if clicking inside form or FAB
+
+          // Close the name form if open before performing the full-screen animation effect
+          if (nameForm.classList.contains('active')) {
+            nameForm.classList.remove('active');
+          }
+
           this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
           this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -382,15 +764,23 @@
           vector.unproject(this.camera);
           const dir = vector.sub(this.camera.position).normalize();
           const distance = -this.camera.position.z / dir.z;
-          this.currenPosition = this.camera.position.clone().add(dir.multiplyScalar(distance));
+          this.currentPosition = this.camera.position.clone().add(dir.multiplyScalar(distance));
 
           this.buttom = true;
           this.data.ease = 0.01;
+
+          // Hide FAB and footer
+          document.getElementById('fab').classList.add('hidden');
+          document.querySelector('footer').classList.add('hidden');
         }
 
         onMouseUp() {
           this.buttom = false;
           this.data.ease = 0.05;
+
+          // Show FAB and footer
+          document.getElementById('fab').classList.remove('hidden');
+          document.querySelector('footer').classList.remove('hidden');
         }
 
         onMouseMove(event) {
@@ -399,8 +789,11 @@
         }
 
         render() {
-          const time = (0.001 * performance.now()) % 12 / 12;
-          const zigzagTime = (1 + Math.sin(time * 2 * Math.PI)) / 6;
+          this.handleInteractions();
+        }
+
+        handleInteractions() {
+          if (!this.particles) return;
 
           this.raycaster.setFromCamera(this.mouse, this.camera);
           const intersects = this.raycaster.intersectObject(this.planeArea);
@@ -424,7 +817,7 @@
               let py = pos.getY(i);
               let pz = pos.getZ(i);
 
-              this.colorChange.setRGB(0.78, 0.24, 0.98); // Default static color (#783BFA)
+              this.colorChange.setRGB(0.78, 0.24, 0.98);
               colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
               colors.needsUpdate = true;
 
@@ -443,7 +836,7 @@
                 px -= f * Math.cos(t);
                 py -= f * Math.sin(t);
 
-                this.colorChange.setRGB(1.0, 1.0, 1.0); // Moving color (#CCFB53)
+                this.colorChange.setRGB(1.0, 1.0, 1.0);
                 colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
                 colors.needsUpdate = true;
 
@@ -516,6 +909,111 @@
           return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
         }
       }
+
+      // Toggle Name Form visibility
+      const fab = document.getElementById('fab');
+      const nameForm = document.getElementById('name-form');
+      let isDragging = false;
+
+      fab.addEventListener('click', (event) => {
+        if (!isDragging) { // Prevent click action during dragging
+          if (nameForm.classList.contains('active')) {
+            // If the form is already visible, hide it
+            nameForm.classList.remove('active');
+          } else {
+            // If the form is hidden, show it
+            nameForm.classList.add('active');
+          }
+        }
+        updateNameFormPosition();
+      });
+
+      // Change text dynamically
+      document.getElementById('generate-btn').addEventListener('click', function() {
+        const userName = document.getElementById('user-name').value.trim();
+        if (environment && environment.createParticles) {
+          environment.createParticles.updateText(userName || 'WEB610'); // Use input value or default to WEB610
+        }
+      });
+
+      // Prevent hiding form on input focus
+      document.getElementById('user-name').addEventListener('focus', function(e) {
+        e.stopPropagation(); // Stop the focus event from bubbling up
+      });
+
+      // Draggable functionality for the FAB
+      function makeDraggable(element) {
+        let startX, startY, initialLeft, initialTop;
+
+        element.addEventListener('mousedown', function(e) {
+          isDragging = false; // Reset the dragging state
+          startX = e.clientX;
+          startY = e.clientY;
+          initialLeft = element.offsetLeft;
+          initialTop = element.offsetTop;
+          element.style.transition = 'none'; // Disable transition for smooth dragging
+
+          // Disable animation interactions during drag
+          environment.animationPaused = true;
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        });
+
+        function onMouseMove(e) {
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
+
+          if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            isDragging = true; // Set the dragging state
+          }
+
+          // Calculate new position and constrain to window boundaries
+          const newLeft = Math.max(0, Math.min(window.innerWidth - element.clientWidth, initialLeft + deltaX));
+          const newTop = Math.max(0, Math.min(window.innerHeight - element.clientHeight, initialTop + deltaY));
+
+          element.style.left = `${newLeft}px`;
+          element.style.top = `${newTop}px`;
+
+          // Update name form position to follow the FAB
+          updateNameFormPosition();
+        }
+
+        function onMouseUp() {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          element.style.transition = 'transform 0.3s ease'; // Re-enable transition
+
+          // Enable animation interactions after drag
+          environment.animationPaused = false;
+        }
+      }
+
+      // Function to update the position of the name form to follow the FAB
+      function updateNameFormPosition() {
+        const fabRect = fab.getBoundingClientRect();
+
+        // Ensure the name form stays within screen boundaries
+        let leftPosition = fabRect.right + 10; // Default position to the right of FAB
+        let topPosition = fabRect.top;
+
+        if (fabRect.right + nameForm.clientWidth > window.innerWidth) {
+          // If FAB is too close to the right edge, place the form to the left of FAB
+          leftPosition = fabRect.left - nameForm.clientWidth - 10;
+        }
+        if (fabRect.top + nameForm.clientHeight > window.innerHeight) {
+          // If FAB is too close to the bottom, adjust the top position
+          topPosition = fabRect.bottom - nameForm.clientHeight;
+        }
+
+        nameForm.style.left = `${leftPosition}px`;
+        nameForm.style.top = `${topPosition}px`;
+      }
+
+      // Initialize draggable functionality
+      makeDraggable(fab);
+
+      // Update name form position on window resize
+      window.addEventListener('resize', updateNameFormPosition);
     }
   </script>
 </body>

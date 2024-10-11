@@ -997,6 +997,9 @@
             environment.createParticles.updateText(userName);
           }
         }
+        // Hide the form after clicking generate
+        nameForm.classList.remove('active');
+        fab.classList.remove('hidden');
       });
 
       document.getElementById('user-name').addEventListener('input', function(e) {

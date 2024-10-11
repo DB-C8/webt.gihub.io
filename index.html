@@ -4,83 +4,339 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Web610 😎</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; width: 100%; overflow: hidden; font-family: Arial, sans-serif; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0A001F; display: flex; justify-content: center; align-items: center; z-index: 10000; transition: opacity 1s ease; }
+    html, body { 
+      height: 100%; 
+      width: 100%; 
+      overflow: hidden; 
+      font-family: Arial, sans-serif; 
+      -webkit-user-select: none; 
+      -moz-user-select: none; 
+      -ms-user-select: none; 
+      user-select: none; 
+    }
+    
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0A001F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: opacity 1s ease;
+    }
     #loader.hidden { opacity: 0; pointer-events: none; }
-    #magic { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -9999; overflow: hidden; background-color: #0A001F; }
-    .particle-text-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; text-align: center; opacity: 0; transition: opacity 1.5s ease; }
-    .particle-text-container.visible { opacity: 1; }
-    #fab { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background-color: #CCFB53; border-radius: 50%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 10001; transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease; overflow: hidden; user-select: none; }
-    #fab svg { width: 32px; height: 32px; transition: transform 0.3s ease; fill: #212E00; }
-    #fab:hover { background-color: #5a29c7; }
-    #fab:hover svg { fill: #ffffff; transform: scale(1.1); }
-    #fab:active::after { content: ''; position: absolute; top: 50%; left: 50%; width: 200%; height: 200%; background: rgba(255, 255, 255, 0.3); border-radius: 50%; transform: translate(-50%, -50%) scale(0); animation: ripple 0.6s ease-out; pointer-events: none; }
+    
+    #magic {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -9999;
+      overflow: hidden;
+      background-color: #0A001F;
+    }
+
+    /* Hide the particle text completely */
+    #particle-text {
+      display: none;
+    }
+    
+    .particle-text-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden; /* Initially hidden to prevent rendering before particle animation */
+      transition: opacity 1.5s ease, visibility 0s 1.5s; /* Visibility changes after opacity transition */
+      font-family: 'Inter', sans-serif;
+    }
+    .particle-text-container.visible {
+      opacity: 1;
+      visibility: visible; /* Visible when animation is ready */
+      transition: opacity 1.5s ease, visibility 0s 0s; /* Visibility immediately when shown */
+    }
+
+    #fab {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #CCFB53;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10001;
+      transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #fab svg {
+      width: 24px; 
+      height: 24px;
+      fill: #212E00; 
+      transition: transform 0.3s ease;
+    }
+
+    #fab:hover {
+      background-color: #5a29c7;
+    }
+
+    #fab:hover svg {
+      fill: #ffffff;
+      transform: scale(1.1);
+    }
+
+    #fab:active::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      animation: ripple 0.6s ease-out;
+      pointer-events: none;
+    }
     @keyframes ripple { to { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
-    #name-form { position: fixed; background: #1e1e1e; border-radius: 10px; padding: 20px 25px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); display: none; flex-direction: column; align-items: center; z-index: 10001; transition: opacity 0.3s ease, transform 0.3s ease, width 0.5s ease, height 0.5s ease; width: 0; height: 0; overflow: hidden; }
-    #name-form.active { display: flex; opacity: 1; width: 380px; height: auto; }
+
+    #name-form {
+      position: fixed;
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 20px 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10001;
+      transition: opacity 0.3s ease, transform 0.3s ease, width 0.5s ease, height 0.5s ease;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+    #name-form.active {
+      display: flex;
+      opacity: 1;
+      width: 380px;
+      height: auto;
+    }
     #name-form.hidden { opacity: 0; width: 0; height: 0; }
-    #name-form input { width: 100%; height: 40px; padding: 8px 15px; margin-bottom: 15px; border: 2px solid #783BFA; border-radius: 6px; font-size: 1.2em; background-color: #333333; color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-    #name-form input:focus { border-color: #CCFB53; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); outline: none; }
+    #name-form input {
+      width: 100%;
+      height: 40px;
+      padding: 8px 15px;
+      margin-bottom: 15px;
+      border: 2px solid #783BFA;
+      border-radius: 6px;
+      font-size: 1.2em;
+      background-color: #333333;
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    #name-form input:focus {
+      border-color: #CCFB53;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      outline: none;
+    }
     #name-form input::placeholder { color: #aaaaaa; }
-    #name-form button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; background-color: #CCFB53; color: #000000; transition: background-color 0.3s ease, transform 0.3s ease; }
+    #name-form button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #CCFB53;
+      color: #000000;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
     #name-form button:hover { background-color: #bff72e; transform: translateY(-2px); }
-    #error-message { color: #ff4d4d; font-size: 0.9em; margin-top: 10px; text-align: center; }
-    footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background: linear-gradient(45deg, #8989ee, #783BFA); box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2); display: flex; justify-content: space-between; align-items: center; color: #ffffff; font-size: 1.1em; font-weight: 500; transition: opacity 0.6s ease; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    #error-message {
+      color: #ff4d4d;
+      font-size: 0.9em;
+      margin-top: 10px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 20px;
+      background: linear-gradient(45deg, #8989ee, #783BFA);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      font-size: 1.1em;
+      font-weight: 500;
+      transition: opacity 0.6s ease;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-family: 'Inter', sans-serif;
+    }
     footer.hidden { opacity: 0; }
-    footer a { color: #ffffff; text-decoration: none; margin: 0 15px; display: flex; align-items: center; transition: color 0.3s ease, transform 0.3s ease; }
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 15px;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s ease, transform 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
     footer a:hover { color: #CCFB53; transform: scale(1.05); }
     footer a svg { margin-right: 8px; fill: #ffffff; transition: fill 0.3s ease; }
     footer a:hover svg { fill: #CCFB53; }
-    @media (max-width: 600px) { #fab { width: 50px; height: 50px; } #fab svg { width: 24px; height: 24px; } footer { flex-direction: column; text-align: center; } footer a { margin: 10px 0; } }
-    @media (min-width: 1200px) { #fab { width: 70px; height: 70px; } #fab svg { width: 40px; height: 40px; } }
+    
+    @media (max-width: 600px) {
+      #fab { width: 50px; height: 50px; }
+      #fab svg { width: 24px; height: 24px; }
+      footer { flex-direction: column; text-align: center; }
+      footer a { margin: 10px 0; }
+    }
+    @media (min-width: 1200px) {
+      #fab { width: 70px; height: 70px; }
+      #fab svg { width: 40px; height: 40px; }
+    }
+    
+    #device-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #783BFA 0%, #5a29c7 50%, #0A001F 100%);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100000;
+      text-align: center;
+      color: #ffffff;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    #device-overlay.visible { display: flex; }
+    #device-overlay p {
+      font-size: 2em;
+      line-height: 1.5;
+      max-width: 800px;
+      margin: 0 auto;
+      font-weight: Thin 100;
+    }
+    #device-overlay p span { color: #CCFB53; }
+
+    body.mobile-view > *:not(#device-overlay) {
+      display: none !important;
+    }
+
+    #top-right-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #ffffff;
+      color: #783BFA;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1em;
+      font-weight: bold;
+      z-index: 10001;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: none;
+      font-family: 'Inter', sans-serif;
+    }
+    #top-right-button.visible {
+      display: block;
+    }
+    #top-right-button:hover {
+      background-color: #f0f0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
   </style>
+  
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
 </head>
 <body>
-  <!-- Loader Section -->
+  <a href="https://www.web610.com" id="top-right-button" target="_blank" rel="noopener noreferrer">Web610</a>
+
   <div id="loader"></div>
+  
   <div id="magic">
-    <!-- Particle Text Container -->
-    <div class="particle-text-container" id="particle-text"></div>
+    <div class="particle-text-container" id="particle-text">WEB610</div>
   </div>
-  <!-- Floating Action Button (FAB) -->
+
   <div id="fab" aria-label="Open Name Form" role="button" tabindex="0">
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25Z" fill="currentColor"/>
       <path d="M20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="currentColor"/>
     </svg>
   </div>
-  <!-- Expanded Name Form -->
+
   <div id="name-form">
     <input type="text" id="user-name" placeholder="First and Last Name">
     <button id="generate-btn">Generate</button>
     <div id="error-message"></div>
   </div>
-  <!-- Full-Screen Device Overlay -->
+  
   <div id="device-overlay" aria-live="assertive" role="alert">
     <p>
-      This site is not available on mobile devices. Please access it from a desktop browser for the best experience.
+      Experience the magic on a larger screen!<br><br>
+      Please open this site on a <span>laptop</span> or <span>desktop</span> for the full experience.
     </p>
   </div>
-  <!-- Footer Section -->
+  
   <footer>
-    <a href="https://www.google.com/maps/place/Web610+%F0%9F%8C%9F/@40.6115684,-75.3813732,17z/data=!3m2!4b1!5s0x89c43e5c8f450e81:0x1d50a82404d98642!4m6!3m5!1s0x89c43f299ba02093:0x66de4aaf2844af7b!8m2!3d40.6115684!4d-75.3787983!16s%2Fg%2F11w1dxbhlz?entry=ttu&g_ep=EgoyMDI0MDkxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">
-      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 2.25 1.92 5.9 5.34 10.05.35.43.97.43 1.32 0C17.08 14.9 19 11.25 19 9c0-3.86-3.14-7-7-7zm0 15c-1.66 0-5-4.33-5-8 0-2.76 2.24-5 5-5s5 2.24 5 5c0 3.67-3.34 8-5 8zm0-10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+    <a href="https://www.google.com/maps/place/Web610+%F0%9F%8C%9F/@40.6115684,-75.3813732,17z/data=!3m2!4b1!5s0x89c43e5c8f450e81:0x1d50a82404d98642!4m6!3m5!1s0x89c43f299ba02093:0x66de4aaf2844af7b!8m2!3d40.6115684!4d-75.3787983!16s%2Fg%2F11w1dxbhlz?entry=ttu&g_ep=EgoyMDI0MDkxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path d="M12 2C8.14 2 5 5.14 5 9c0 2.25 1.92 5.9 5.34 10.05.35.43.97.43 1.32 0C17.08 14.9 19 11.25 19 9c0-3.86-3.14-7-7-7zm0 15c-1.66 0-5-4.33-5-8 0-2.76 2.24-5 5-5s5 2.24 5 5c0 3.67-3.34 8-5 8zm0-10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+      </svg>
       306 South New Street, Suite 220, Bethlehem, PA 18015
     </a>
-    <a href="mailto:hello@web610.com" target="_blank">
-      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg>
+    <a href="mailto:hello@web610.com" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path d="M20 4H4c-1.11 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path>
+      </svg>
       hello@web610.com
     </a>
-    <a href="tel:610-585-3666" target="_blank">
-      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M6.62 10.79a15.534 15.534 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.08-.22c1.17.46 2.45.71 3.76.71.55 0 1 .45 1 1v3.5c0 .55-.45 1-1 1C12.39 21 3 11.61 3 3c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.31.25 2.59.71 3.76.14.34.06.73-.22 1.01l-2.2 2.2z"></path></svg>
+    <a href="tel:610-585-3666" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path d="M6.62 10.79a15.534 15.534 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.08-.22c1.17.46 2.45.71 3.76.71.55 0 1 .45 1 1v3.5c0 .55-.45 1-1 1C12.39 21 3 11.61 3 3c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.31.25 2.59.71 3.76.14.34.06.73-.22 1.01l-2.2 2.2z"></path>
+      </svg>
       610-585-3666
     </a>
   </footer>
-  <!-- Vertex Shader -->
+
   <script type="x-shader/x-vertex" id="vertexshader">
     attribute float size;
     attribute vec3 customColor;
@@ -92,7 +348,7 @@
       gl_Position = projectionMatrix * mvPosition;
     }
   </script>
-  <!-- Fragment Shader -->
+
   <script type="x-shader/x-fragment" id="fragmentshader">
     uniform vec3 color;
     uniform sampler2D pointTexture;
@@ -102,20 +358,21 @@
       gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
     }
   </script>
+
   <script>
     let environment;
-    let confettiComplete = false; // Track confetti completion
-    let isAnimationComplete = false; // Track particle animation completion
+    let confettiComplete = false; 
+    let isAnimationComplete = false;
 
     function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+      return /Android|webOS|iPhone|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent);
     }
 
     function showOverlay() {
       var overlay = document.getElementById('device-overlay');
       if (overlay) {
         overlay.classList.add('visible');
-        document.body.classList.add('no-scroll');
+        document.body.classList.add('no-scroll', 'mobile-view'); 
       }
     }
 
@@ -173,8 +430,8 @@
 
         bindEvents() {
           window.addEventListener('resize', this.onWindowResize.bind(this));
-          window.addEventListener('orientationchange', this.onWindowResize.bind(this)); 
-          window.addEventListener('fullscreenchange', this.onWindowResize.bind(this)); 
+          window.addEventListener('orientationchange', this.onWindowResize.bind(this));
+          window.addEventListener('fullscreenchange', this.onWindowResize.bind(this));
         }
 
         setup() {
@@ -210,7 +467,7 @@
           this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
           this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
           this.renderer.outputEncoding = THREE.sRGBEncoding;
-          this.renderer.setClearColor(0x0A001F, 1); 
+          this.renderer.setClearColor(0x0A001F, 1);
           this.container.appendChild(this.renderer.domElement);
           this.renderer.setAnimationLoop(() => {
             this.render();
@@ -238,18 +495,18 @@
           this.renderer = renderer;
 
           this.raycaster = new THREE.Raycaster();
-          this.mouse = new THREE.Vector2(-200, 200); 
+          this.mouse = new THREE.Vector2(-200, 200);
           this.colorChange = new THREE.Color();
           this.buttom = false;
-          this.maxIterations = 80; // Increased max iterations
+          this.maxIterations = 80;
 
           this.data = {
-            text: 'WEB610', 
+            text: 'WEB610',
             amount: 1500,
             particleSize: 1,
             particleColor: 0xffffff,
             textSize: this.getAutoTextSize(),
-            area: 100, // Set the initial area to 100
+            area: 100, 
             ease: 0.05,
             minTextSize: 15,
             maxTextWidth: 0.95,
@@ -257,9 +514,9 @@
             padding: 0.1,
           };
 
-          this.footerHeight = document.querySelector('footer').offsetHeight; 
-          this.particles = null; 
-          this.geometryCopy = null; 
+          this.footerHeight = document.querySelector('footer').offsetHeight;
+          this.particles = null;
+          this.geometryCopy = null;
 
           this.maxLineWidth = 0;
 
@@ -433,7 +690,6 @@
         fadeInParticles() {
           if (!this.particles) return;
 
-          // Set initial positions to random locations on the screen
           const positions = this.particles.geometry.attributes.position;
           const targetPositions = this.geometryCopy.attributes.position;
 
@@ -446,13 +702,12 @@
           }
           positions.needsUpdate = true;
 
-          // Animate particles to move to their final text positions
-          const duration = 4000; // Increased duration for a slower effect
+          const duration = 4000;
           const startTime = performance.now();
 
           const animate = (time) => {
             const elapsed = time - startTime;
-            const progress = Math.min(elapsed / duration, 1); // Normalize progress (0 to 1)
+            const progress = Math.min(elapsed / duration, 1);
 
             for (let i = 0; i < positions.count; i++) {
               const startX = positions.getX(i);
@@ -471,15 +726,14 @@
             }
             positions.needsUpdate = true;
 
-            // Fade in the particles as they move to their positions
             this.particles.material.opacity = progress;
             this.particles.material.needsUpdate = true;
 
             if (progress < 1) {
               requestAnimationFrame(animate);
             } else {
-              isAnimationComplete = true; // Set animation completion status
-              this.data.area = 100; // Reset area after animation
+              isAnimationComplete = true;
+              this.data.area = 100;
             }
           };
 
@@ -524,7 +778,6 @@
 
           this.data.text = words.length === 0 ? "WEB610" : words.length === 2 ? `${words[0]}\n${words[1]}` : words[0];
 
-          // Update camera and area based on text
           if (this.data.text === 'WEB610') {
             this.camera.fov = 40;
             this.camera.updateProjectionMatrix();
@@ -537,6 +790,7 @@
 
           this.createText();
           this.adjustTextSize();
+          this.fadeInParticles();
         }
 
         onWindowResize() {
@@ -547,7 +801,7 @@
         }
 
         onMouseDown(event) {
-          if (!nameForm || !fab) return; // Check if elements exist
+          if (!nameForm || !fab) return;
           if (event.target.closest('#name-form, #fab')) return;
 
           if (nameForm.classList.contains('active')) {
@@ -569,6 +823,7 @@
 
           fab.style.opacity = '0';
           document.querySelector('footer').classList.add('hidden');
+          hideTopRightButton();
         }
 
         onMouseUp() {
@@ -577,6 +832,7 @@
 
           fab.style.opacity = '1';
           document.querySelector('footer').classList.remove('hidden');
+          showTopRightButton();
         }
 
         onMouseMove(event) {
@@ -589,7 +845,7 @@
         }
 
         handleInteractions() {
-          if (!this.particles || !isAnimationComplete) return; // Ensure interactions are handled after animation completes
+          if (!this.particles || !isAnimationComplete) return;
 
           this.raycaster.setFromCamera(this.mouse, this.camera);
           const intersects = this.raycaster.intersectObject(this.planeArea);
@@ -708,6 +964,15 @@
 
       const fab = document.getElementById('fab');
       const nameForm = document.getElementById('name-form');
+      const topRightButton = document.getElementById('top-right-button');
+
+      function showTopRightButton() {
+        topRightButton.classList.add('visible');
+      }
+
+      function hideTopRightButton() {
+        topRightButton.classList.remove('visible');
+      }
 
       fab.addEventListener('click', (event) => {
         if (nameForm.classList.contains('active')) {
@@ -715,7 +980,7 @@
           fab.classList.remove('hidden');
         } else {
           nameForm.classList.add('active');
-          fab.classList.add('hidden'); // Hide FAB when form is active
+          fab.classList.add('hidden'); 
         }
 
         if (nameForm.classList.contains('active')) {
@@ -726,20 +991,25 @@
       document.getElementById('generate-btn').addEventListener('click', function() {
         const userName = document.getElementById('user-name').value.trim();
         if (environment && environment.createParticles) {
-          environment.createParticles.updateText(userName || 'WEB610');
+          if (userName === '') {
+            environment.createParticles.updateText('WEB610');
+          } else {
+            environment.createParticles.updateText(userName);
+          }
+        }
+      });
+
+      document.getElementById('user-name').addEventListener('input', function(e) {
+        const userName = e.target.value.trim();
+        if (userName === '') {
+          if (environment && environment.createParticles) {
+            environment.createParticles.updateText('WEB610');
+          }
         }
       });
 
       document.getElementById('user-name').addEventListener('focus', function(e) {
         e.stopPropagation();
-      });
-
-      // Add event listener to update text when input is changed
-      document.getElementById('user-name').addEventListener('input', function() {
-        const userName = document.getElementById('user-name').value.trim();
-        if (environment && environment.createParticles) {
-          environment.createParticles.updateText(userName || 'WEB610');
-        }
       });
 
       function updateNameFormPosition() {
@@ -767,7 +1037,6 @@
         const containerHeight = window.innerHeight;
         const availableHeight = containerHeight - footerHeight;
         const centerY = availableHeight / 2;
-        const adjustedY = centerY - 20;
         particleTextContainer.style.top = `${centerY}px`;
       }
 
@@ -779,7 +1048,7 @@
       particleCount: 1000,
       startVelocity: 40,
       spread: 360,
-      ticks: 200, // Reduced ticks for shorter duration
+      ticks: 200, 
       gravity: 2,
       zIndex: 10000,
       colors: ['#783BFA', '#CCFB53', '#8989ee', '#5a29c7'],
@@ -792,8 +1061,10 @@
       const loader = document.getElementById('loader');
       const particleText = document.getElementById('particle-text');
       const fab = document.getElementById('fab');
+      const topRightButton = document.getElementById('top-right-button');
 
-      fab.style.display = 'none'; // Ensure FAB is hidden initially
+      fab.style.display = 'none';
+      topRightButton.style.display = 'none';
 
       const confettiBursts = 12;
 
@@ -809,28 +1080,47 @@
         loader.classList.add('hidden');
         particleText.classList.add('visible');
         fab.style.display = 'flex';
-        
-        // Start the particle animation with random positions
-        environment.createParticles.fadeInParticles();
+        topRightButton.style.display = 'block';
+
+        if (environment && environment.createParticles) {
+          environment.createParticles.fadeInParticles();
+        }
 
         setTimeout(() => {
-          environment.createParticles.onMouseDown({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-          setTimeout(() => {
-            environment.createParticles.onMouseUp();
-            confettiComplete = true;
-            showFabAndForm();
-          }, 500);
+          if (environment && environment.createParticles) {
+            environment.createParticles.onMouseDown({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+            setTimeout(() => {
+              environment.createParticles.onMouseUp();
+              confettiComplete = true;
+              showFabAndForm();
+            }, 500);
+          }
         }, 500);
       }, 4000);
     });
 
     function showFabAndForm() {
       if (confettiComplete) {
-        fab.style.display = 'flex';
-        environment.createParticles.onMouseUp();
-        fab.classList.remove('hidden');
+        const fab = document.getElementById('fab');
+        const topRightButton = document.getElementById('top-right-button');
+        if (fab) {
+          fab.style.display = 'flex';
+          fab.classList.remove('hidden');
+        }
+        if (topRightButton) {
+          topRightButton.classList.add('visible');
+        }
       }
     }
+
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+      .no-scroll {
+        overflow: hidden;
+      }
+    `;
+    document.head.appendChild(styleSheet);
   </script>
 </body>
 </html>
